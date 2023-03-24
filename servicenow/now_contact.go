@@ -6,6 +6,14 @@ import (
 	"strconv"
 )
 
+type NowContact struct {
+	*ServiceNow
+}
+
+func newNowContact(sn *ServiceNow) *NowContact {
+	return &NowContact{sn}
+}
+
 type ContactGetResponse struct {
 	Result Contact `json:"result"`
 }
@@ -80,19 +88,19 @@ type Contact struct {
 	Account                 string `json:"account"`
 }
 
-func (sn *ServiceNow) GetContacts(limit, offset int) (*ContactListResponse, error) {
+func (sn *NowContact) GetContacts(limit, offset int) (*ContactListResponse, error) {
 	var result ContactListResponse
 	err := sn.retrieveContacts(limit, offset, &result)
 	return &result, err
 }
 
-func (sn *ServiceNow) GetContact(sysId string) (*ContactGetResponse, error) {
+func (sn *NowContact) GetContact(sysId string) (*ContactGetResponse, error) {
 	var result ContactGetResponse
 	err := sn.retrieveContact(sysId, &result)
 	return &result, err
 }
 
-func (sn *ServiceNow) retrieveContacts(limit, offset int, result interface{}) error {
+func (sn *NowContact) retrieveContacts(limit, offset int, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath("api/now/contact")
 
 	queryUrl := endpointUrl.Query()
@@ -109,7 +117,7 @@ func (sn *ServiceNow) retrieveContacts(limit, offset int, result interface{}) er
 	return sn.doAPI(*req, result)
 }
 
-func (sn *ServiceNow) retrieveContact(sysId string, result interface{}) error {
+func (sn *NowContact) retrieveContact(sysId string, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath("api/now/contact").JoinPath(sysId)
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)

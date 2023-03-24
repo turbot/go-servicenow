@@ -10,8 +10,12 @@ import (
 )
 
 type ServiceNow struct {
-	baseURL         *url.URL
-	servicenowToken string
+	baseURL                  *url.URL
+	servicenowToken          string
+	NowContact               *NowContact
+	NowConsumer              *NowConsumer
+	NowTable                 *NowTable
+	SnKmApiKnowledgeArticles *SnKmApiKnowledgeArticles
 }
 
 type Config struct {
@@ -40,10 +44,16 @@ func New(config Config) (serviceNow *ServiceNow, err error) {
 		return nil, err
 	}
 
-	return &ServiceNow{
+	sn := &ServiceNow{
 		baseURL:         baseURL,
 		servicenowToken: resp.AccessToken,
-	}, nil
+	}
+	sn.NowContact = newNowContact(sn)
+	sn.NowConsumer = newNowConsumer(sn)
+	sn.NowTable = newNowTable(sn)
+	sn.SnKmApiKnowledgeArticles = newSnKmApiKnowledgeArticles(sn)
+
+	return sn, nil
 }
 
 func authenticate(config Config, resp interface{}) (statusCode int, err error) {

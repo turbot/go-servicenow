@@ -6,6 +6,14 @@ import (
 	"strconv"
 )
 
+type SnKmApiKnowledgeArticles struct {
+	*ServiceNow
+}
+
+func newSnKmApiKnowledgeArticles(sn *ServiceNow) *SnKmApiKnowledgeArticles {
+	return &SnKmApiKnowledgeArticles{sn}
+}
+
 type ArticleGetResponse struct {
 	Result Article `json:"result"`
 }
@@ -69,19 +77,19 @@ type ArticleResult struct {
 	Articles []Article `json:"articles"`
 }
 
-func (sn *ServiceNow) GetArticles(limit, offset int) (*ArticleListResponse, error) {
+func (sn *SnKmApiKnowledgeArticles) GetArticles(limit, offset int) (*ArticleListResponse, error) {
 	var result ArticleListResponse
 	err := sn.retrieveArticles(limit, offset, &result)
 	return &result, err
 }
 
-func (sn *ServiceNow) GetArticle(sysId string) (*ArticleGetResponse, error) {
+func (sn *SnKmApiKnowledgeArticles) GetArticle(sysId string) (*ArticleGetResponse, error) {
 	var result ArticleGetResponse
 	err := sn.retrieveArticle(sysId, &result)
 	return &result, err
 }
 
-func (sn *ServiceNow) retrieveArticles(limit, offset int, result interface{}) error {
+func (sn *SnKmApiKnowledgeArticles) retrieveArticles(limit, offset int, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath("api/sn_km_api/knowledge/articles")
 
 	queryUrl := endpointUrl.Query()
@@ -98,7 +106,7 @@ func (sn *ServiceNow) retrieveArticles(limit, offset int, result interface{}) er
 	return sn.doAPI(*req, result)
 }
 
-func (sn *ServiceNow) retrieveArticle(sysId string, result interface{}) error {
+func (sn *SnKmApiKnowledgeArticles) retrieveArticle(sysId string, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath("api/sn_km_api/knowledge/articles").JoinPath(sysId)
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)

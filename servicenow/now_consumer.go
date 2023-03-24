@@ -6,6 +6,14 @@ import (
 	"strconv"
 )
 
+type NowConsumer struct {
+	*ServiceNow
+}
+
+func newNowConsumer(sn *ServiceNow) *NowConsumer {
+	return &NowConsumer{sn}
+}
+
 type ConsumerGetResponse struct {
 	Result Consumer `json:"result"`
 }
@@ -53,19 +61,19 @@ type Consumer struct {
 	Primary           string `json:"primary"`
 }
 
-func (sn *ServiceNow) GetConsumers(limit, offset int) (*ConsumerListResponse, error) {
+func (sn *NowConsumer) GetConsumers(limit, offset int) (*ConsumerListResponse, error) {
 	var result ConsumerListResponse
 	err := sn.retrieveConsumers(limit, offset, &result)
 	return &result, err
 }
 
-func (sn *ServiceNow) GetConsumer(sysId string) (*ConsumerGetResponse, error) {
+func (sn *NowConsumer) GetConsumer(sysId string) (*ConsumerGetResponse, error) {
 	var result ConsumerGetResponse
 	err := sn.retrieveConsumer(sysId, &result)
 	return &result, err
 }
 
-func (sn *ServiceNow) retrieveConsumers(limit, offset int, result interface{}) error {
+func (sn *NowConsumer) retrieveConsumers(limit, offset int, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath("api/now/consumer")
 
 	queryUrl := endpointUrl.Query()
@@ -82,7 +90,7 @@ func (sn *ServiceNow) retrieveConsumers(limit, offset int, result interface{}) e
 	return sn.doAPI(*req, result)
 }
 
-func (sn *ServiceNow) retrieveConsumer(sysId string, result interface{}) error {
+func (sn *NowConsumer) retrieveConsumer(sysId string, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath("api/now/consumer").JoinPath(sysId)
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)
