@@ -61,13 +61,13 @@ type Consumer struct {
 	Primary           string `json:"primary"`
 }
 
-func (sn *NowConsumer) GetConsumers(limit, offset int) (*ConsumerListResponse, error) {
+func (sn *NowConsumer) List(limit, offset int) (*ConsumerListResponse, error) {
 	var result ConsumerListResponse
 	err := sn.retrieveConsumers(limit, offset, &result)
 	return &result, err
 }
 
-func (sn *NowConsumer) GetConsumer(sysId string) (*ConsumerGetResponse, error) {
+func (sn *NowConsumer) Read(sysId string) (*ConsumerGetResponse, error) {
 	var result ConsumerGetResponse
 	err := sn.retrieveConsumer(sysId, &result)
 	return &result, err

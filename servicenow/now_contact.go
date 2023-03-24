@@ -88,13 +88,13 @@ type Contact struct {
 	Account                 string `json:"account"`
 }
 
-func (sn *NowContact) GetContacts(limit, offset int) (*ContactListResponse, error) {
+func (sn *NowContact) List(limit, offset int) (*ContactListResponse, error) {
 	var result ContactListResponse
 	err := sn.retrieveContacts(limit, offset, &result)
 	return &result, err
 }
 
-func (sn *NowContact) GetContact(sysId string) (*ContactGetResponse, error) {
+func (sn *NowContact) Read(sysId string) (*ContactGetResponse, error) {
 	var result ContactGetResponse
 	err := sn.retrieveContact(sysId, &result)
 	return &result, err

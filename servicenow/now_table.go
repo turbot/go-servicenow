@@ -14,7 +14,7 @@ func newNowTable(sn *ServiceNow) *NowTable {
 	return &NowTable{sn}
 }
 
-func (sn *NowTable) ListTable(tableName string, limit int, result interface{}) error {
+func (sn *NowTable) List(tableName string, limit int, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath(fmt.Sprintf("api/now/table/%s", tableName))
 
 	queryUrl := endpointUrl.Query()
@@ -30,7 +30,7 @@ func (sn *NowTable) ListTable(tableName string, limit int, result interface{}) e
 	return sn.doAPI(*req, result)
 }
 
-func (sn *NowTable) GetTable(tableName string, sysId string, result interface{}) error {
+func (sn *NowTable) Read(tableName string, sysId string, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath(fmt.Sprintf("api/now/table/%s/%s", tableName, sysId))
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)

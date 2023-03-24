@@ -77,13 +77,13 @@ type ArticleResult struct {
 	Articles []Article `json:"articles"`
 }
 
-func (sn *SnKmApiKnowledgeArticles) GetArticles(limit, offset int) (*ArticleListResponse, error) {
+func (sn *SnKmApiKnowledgeArticles) List(limit, offset int) (*ArticleListResponse, error) {
 	var result ArticleListResponse
 	err := sn.retrieveArticles(limit, offset, &result)
 	return &result, err
 }
 
-func (sn *SnKmApiKnowledgeArticles) GetArticle(sysId string) (*ArticleGetResponse, error) {
+func (sn *SnKmApiKnowledgeArticles) Read(sysId string) (*ArticleGetResponse, error) {
 	var result ArticleGetResponse
 	err := sn.retrieveArticle(sysId, &result)
 	return &result, err
