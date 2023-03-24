@@ -1,4 +1,4 @@
-package goservicenow
+package servicenow
 
 import (
 	"fmt"
