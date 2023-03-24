@@ -80,20 +80,20 @@ type Contact struct {
 	Account                 string `json:"account"`
 }
 
-func (c *Client) GetContacts(limit, offset int) (*ContactListResponse, error) {
+func (sn *ServiceNow) GetContacts(limit, offset int) (*ContactListResponse, error) {
 	var result ContactListResponse
-	err := c.retrieveContacts(limit, offset, &result)
+	err := sn.retrieveContacts(limit, offset, &result)
 	return &result, err
 }
 
-func (c *Client) GetContact(sysId string) (*ContactGetResponse, error) {
+func (sn *ServiceNow) GetContact(sysId string) (*ContactGetResponse, error) {
 	var result ContactGetResponse
-	err := c.retrieveContact(sysId, &result)
+	err := sn.retrieveContact(sysId, &result)
 	return &result, err
 }
 
-func (c *Client) retrieveContacts(limit, offset int, result interface{}) error {
-	endpointUrl := c.baseURL.JoinPath("api/now/contact")
+func (sn *ServiceNow) retrieveContacts(limit, offset int, result interface{}) error {
+	endpointUrl := sn.baseURL.JoinPath("api/now/contact")
 
 	queryUrl := endpointUrl.Query()
 	queryUrl.Add("sysparm_limit", strconv.Itoa(limit))
@@ -106,16 +106,16 @@ func (c *Client) retrieveContacts(limit, offset int, result interface{}) error {
 		fmt.Println(err)
 		return err
 	}
-	return c.doAPI(*req, result)
+	return sn.doAPI(*req, result)
 }
 
-func (c *Client) retrieveContact(sysId string, result interface{}) error {
-	endpointUrl := c.baseURL.JoinPath("api/now/contact").JoinPath(sysId)
+func (sn *ServiceNow) retrieveContact(sysId string, result interface{}) error {
+	endpointUrl := sn.baseURL.JoinPath("api/now/contact").JoinPath(sysId)
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
-	return c.doAPI(*req, result)
+	return sn.doAPI(*req, result)
 }

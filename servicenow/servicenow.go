@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-type Client struct {
+type ServiceNow struct {
 	baseURL         *url.URL
 	servicenowToken string
 }
@@ -31,7 +31,7 @@ type OAuthTokenResponse struct {
 	ExpiresIn    int    `json:"expires_in"`
 }
 
-func New(config Config) (client *Client, err error) {
+func New(config Config) (serviceNow *ServiceNow, err error) {
 	baseURL, _ := url.Parse(config.InstanceURL)
 
 	resp := &OAuthTokenResponse{}
@@ -40,7 +40,7 @@ func New(config Config) (client *Client, err error) {
 		return nil, err
 	}
 
-	return &Client{
+	return &ServiceNow{
 		baseURL:         baseURL,
 		servicenowToken: resp.AccessToken,
 	}, nil
@@ -96,9 +96,9 @@ func authenticate(config Config, resp interface{}) (statusCode int, err error) {
 	return httpResp.StatusCode, nil
 }
 
-func (c *Client) doAPI(req http.Request, result interface{}) error {
+func (sn *ServiceNow) doAPI(req http.Request, result interface{}) error {
 	client := &http.Client{}
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.servicenowToken))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", sn.servicenowToken))
 	res, err := client.Do(&req)
 	if err != nil {
 		fmt.Println(err)

@@ -53,20 +53,20 @@ type Consumer struct {
 	Primary           string `json:"primary"`
 }
 
-func (c *Client) GetConsumers(limit, offset int) (*ConsumerListResponse, error) {
+func (sn *ServiceNow) GetConsumers(limit, offset int) (*ConsumerListResponse, error) {
 	var result ConsumerListResponse
-	err := c.retrieveConsumers(limit, offset, &result)
+	err := sn.retrieveConsumers(limit, offset, &result)
 	return &result, err
 }
 
-func (c *Client) GetConsumer(sysId string) (*ConsumerGetResponse, error) {
+func (sn *ServiceNow) GetConsumer(sysId string) (*ConsumerGetResponse, error) {
 	var result ConsumerGetResponse
-	err := c.retrieveConsumer(sysId, &result)
+	err := sn.retrieveConsumer(sysId, &result)
 	return &result, err
 }
 
-func (c *Client) retrieveConsumers(limit, offset int, result interface{}) error {
-	endpointUrl := c.baseURL.JoinPath("api/now/consumer")
+func (sn *ServiceNow) retrieveConsumers(limit, offset int, result interface{}) error {
+	endpointUrl := sn.baseURL.JoinPath("api/now/consumer")
 
 	queryUrl := endpointUrl.Query()
 	queryUrl.Add("sysparm_limit", strconv.Itoa(limit))
@@ -79,16 +79,16 @@ func (c *Client) retrieveConsumers(limit, offset int, result interface{}) error 
 		fmt.Println(err)
 		return err
 	}
-	return c.doAPI(*req, result)
+	return sn.doAPI(*req, result)
 }
 
-func (c *Client) retrieveConsumer(sysId string, result interface{}) error {
-	endpointUrl := c.baseURL.JoinPath("api/now/consumer").JoinPath(sysId)
+func (sn *ServiceNow) retrieveConsumer(sysId string, result interface{}) error {
+	endpointUrl := sn.baseURL.JoinPath("api/now/consumer").JoinPath(sysId)
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
-	return c.doAPI(*req, result)
+	return sn.doAPI(*req, result)
 }
