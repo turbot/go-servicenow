@@ -1,5 +1,11 @@
 package goservicenow
 
+import (
+	"fmt"
+	"net/http"
+	"strconv"
+)
+
 type ArticleGetResponse struct {
 	Result Article `json:"result"`
 }
@@ -65,12 +71,40 @@ type ArticleResult struct {
 
 func (c *Client) GetArticles(limit, offset int) (*ArticleListResponse, error) {
 	var result ArticleListResponse
-	err := c.listArticles(limit, offset, &result)
+	err := c.retrieveArticles(limit, offset, &result)
 	return &result, err
 }
 
 func (c *Client) GetArticle(sysId string) (*ArticleGetResponse, error) {
 	var result ArticleGetResponse
-	err := c.getArticle(sysId, &result)
+	err := c.retrieveArticle(sysId, &result)
 	return &result, err
+}
+
+func (c *Client) retrieveArticles(limit, offset int, result interface{}) error {
+	endpointUrl := c.baseURL.JoinPath("api/sn_km_api/knowledge/articles")
+
+	queryUrl := endpointUrl.Query()
+	queryUrl.Add("limit", strconv.Itoa(limit))
+	queryUrl.Add("offset", strconv.Itoa(offset))
+	endpointUrl.RawQuery = queryUrl.Encode()
+
+	method := "GET"
+	req, err := http.NewRequest(method, endpointUrl.String(), nil)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return c.doAPI(*req, result)
+}
+
+func (c *Client) retrieveArticle(sysId string, result interface{}) error {
+	endpointUrl := c.baseURL.JoinPath("api/sn_km_api/knowledge/articles").JoinPath(sysId)
+	method := "GET"
+	req, err := http.NewRequest(method, endpointUrl.String(), nil)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return c.doAPI(*req, result)
 }

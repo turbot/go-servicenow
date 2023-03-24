@@ -1,5 +1,11 @@
 package goservicenow
 
+import (
+	"fmt"
+	"net/http"
+	"strconv"
+)
+
 type ContactGetResponse struct {
 	Result Contact `json:"result"`
 }
@@ -76,12 +82,40 @@ type Contact struct {
 
 func (c *Client) GetContacts(limit, offset int) (*ContactListResponse, error) {
 	var result ContactListResponse
-	err := c.listContacts(limit, offset, &result)
+	err := c.retrieveContacts(limit, offset, &result)
 	return &result, err
 }
 
 func (c *Client) GetContact(sysId string) (*ContactGetResponse, error) {
 	var result ContactGetResponse
-	err := c.getContact(sysId, &result)
+	err := c.retrieveContact(sysId, &result)
 	return &result, err
+}
+
+func (c *Client) retrieveContacts(limit, offset int, result interface{}) error {
+	endpointUrl := c.baseURL.JoinPath("api/now/contact")
+
+	queryUrl := endpointUrl.Query()
+	queryUrl.Add("sysparm_limit", strconv.Itoa(limit))
+	queryUrl.Add("sysparm_offset", strconv.Itoa(offset))
+	endpointUrl.RawQuery = queryUrl.Encode()
+
+	method := "GET"
+	req, err := http.NewRequest(method, endpointUrl.String(), nil)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return c.doAPI(*req, result)
+}
+
+func (c *Client) retrieveContact(sysId string, result interface{}) error {
+	endpointUrl := c.baseURL.JoinPath("api/now/contact").JoinPath(sysId)
+	method := "GET"
+	req, err := http.NewRequest(method, endpointUrl.String(), nil)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return c.doAPI(*req, result)
 }

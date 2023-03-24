@@ -1,5 +1,11 @@
 package goservicenow
 
+import (
+	"fmt"
+	"net/http"
+	"strconv"
+)
+
 type ConsumerGetResponse struct {
 	Result Consumer `json:"result"`
 }
@@ -49,12 +55,40 @@ type Consumer struct {
 
 func (c *Client) GetConsumers(limit, offset int) (*ConsumerListResponse, error) {
 	var result ConsumerListResponse
-	err := c.listConsumers(limit, offset, &result)
+	err := c.retrieveConsumers(limit, offset, &result)
 	return &result, err
 }
 
 func (c *Client) GetConsumer(sysId string) (*ConsumerGetResponse, error) {
 	var result ConsumerGetResponse
-	err := c.getConsumer(sysId, &result)
+	err := c.retrieveConsumer(sysId, &result)
 	return &result, err
+}
+
+func (c *Client) retrieveConsumers(limit, offset int, result interface{}) error {
+	endpointUrl := c.baseURL.JoinPath("api/now/consumer")
+
+	queryUrl := endpointUrl.Query()
+	queryUrl.Add("sysparm_limit", strconv.Itoa(limit))
+	queryUrl.Add("sysparm_offset", strconv.Itoa(offset))
+	endpointUrl.RawQuery = queryUrl.Encode()
+
+	method := "GET"
+	req, err := http.NewRequest(method, endpointUrl.String(), nil)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return c.doAPI(*req, result)
+}
+
+func (c *Client) retrieveConsumer(sysId string, result interface{}) error {
+	endpointUrl := c.baseURL.JoinPath("api/now/consumer").JoinPath(sysId)
+	method := "GET"
+	req, err := http.NewRequest(method, endpointUrl.String(), nil)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return c.doAPI(*req, result)
 }

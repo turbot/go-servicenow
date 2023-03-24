@@ -6,14 +6,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 )
 
 type Client struct {
 	baseURL         *url.URL
 	servicenowToken string
-	// client          *http.Client
 }
 
 type Config struct {
@@ -98,33 +96,6 @@ func authenticate(config Config, resp interface{}) (statusCode int, err error) {
 	return httpResp.StatusCode, nil
 }
 
-func (c *Client) listTable(tableName string, limit int, result interface{}) error {
-	endpointUrl := c.baseURL.JoinPath(fmt.Sprintf("api/now/table/%s", tableName))
-
-	queryUrl := endpointUrl.Query()
-	queryUrl.Add("sysparm_limit", strconv.Itoa(limit))
-	endpointUrl.RawQuery = queryUrl.Encode()
-
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	return c.doAPI(*req, result)
-}
-
-func (c *Client) getTable(tableName string, sysId string, result interface{}) error {
-	endpointUrl := c.baseURL.JoinPath(fmt.Sprintf("api/now/table/%s/%s", tableName, sysId))
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	return c.doAPI(*req, result)
-}
-
 func (c *Client) doAPI(req http.Request, result interface{}) error {
 	client := &http.Client{}
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.servicenowToken))
@@ -147,90 +118,6 @@ func (c *Client) doAPI(req http.Request, result interface{}) error {
 		return err
 	}
 	return nil
-}
-
-func (c *Client) listArticles(limit, offset int, result interface{}) error {
-	endpointUrl := c.baseURL.JoinPath("api/sn_km_api/knowledge/articles")
-
-	queryUrl := endpointUrl.Query()
-	queryUrl.Add("limit", strconv.Itoa(limit))
-	queryUrl.Add("offset", strconv.Itoa(offset))
-	endpointUrl.RawQuery = queryUrl.Encode()
-
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	return c.doAPI(*req, result)
-}
-
-func (c *Client) getArticle(sysId string, result interface{}) error {
-	endpointUrl := c.baseURL.JoinPath("api/sn_km_api/knowledge/articles").JoinPath(sysId)
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	return c.doAPI(*req, result)
-}
-
-func (c *Client) listConsumers(limit, offset int, result interface{}) error {
-	endpointUrl := c.baseURL.JoinPath("api/now/consumer")
-
-	queryUrl := endpointUrl.Query()
-	queryUrl.Add("sysparm_limit", strconv.Itoa(limit))
-	queryUrl.Add("sysparm_offset", strconv.Itoa(offset))
-	endpointUrl.RawQuery = queryUrl.Encode()
-
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	return c.doAPI(*req, result)
-}
-
-func (c *Client) getConsumer(sysId string, result interface{}) error {
-	endpointUrl := c.baseURL.JoinPath("api/now/consumer").JoinPath(sysId)
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	return c.doAPI(*req, result)
-}
-
-func (c *Client) listContacts(limit, offset int, result interface{}) error {
-	endpointUrl := c.baseURL.JoinPath("api/now/contact")
-
-	queryUrl := endpointUrl.Query()
-	queryUrl.Add("sysparm_limit", strconv.Itoa(limit))
-	queryUrl.Add("sysparm_offset", strconv.Itoa(offset))
-	endpointUrl.RawQuery = queryUrl.Encode()
-
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	return c.doAPI(*req, result)
-}
-
-func (c *Client) getContact(sysId string, result interface{}) error {
-	endpointUrl := c.baseURL.JoinPath("api/now/contact").JoinPath(sysId)
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
-	return c.doAPI(*req, result)
 }
 
 type HTTPError struct {
