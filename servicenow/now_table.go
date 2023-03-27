@@ -24,8 +24,7 @@ func (sn *NowTable) List(tableName string, limit int, result interface{}) error 
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return fmt.Errorf("failed to create a new request: %w", err)
 	}
 	return sn.doAPI(*req, result)
 }
@@ -35,8 +34,7 @@ func (sn *NowTable) Read(tableName string, sysId string, result interface{}) err
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return fmt.Errorf("failed to create a new request: %w", err)
 	}
 	return sn.doAPI(*req, result)
 }

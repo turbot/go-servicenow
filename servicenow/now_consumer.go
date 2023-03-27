@@ -84,8 +84,7 @@ func (sn *NowConsumer) retrieveConsumers(limit, offset int, result interface{}) 
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return fmt.Errorf("failed to create a new request: %w", err)
 	}
 	return sn.doAPI(*req, result)
 }
@@ -95,8 +94,7 @@ func (sn *NowConsumer) retrieveConsumer(sysId string, result interface{}) error 
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return fmt.Errorf("failed to create a new request: %w", err)
 	}
 	return sn.doAPI(*req, result)
 }

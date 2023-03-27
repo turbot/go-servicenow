@@ -39,7 +39,7 @@ func New(config Config) (serviceNow *ServiceNow, err error) {
 	baseURL, _ := url.Parse(config.InstanceURL)
 
 	resp := &OAuthTokenResponse{}
-	_, err = authenticate(config, resp)
+	err = authenticate(config, resp)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func New(config Config) (serviceNow *ServiceNow, err error) {
 	return sn, nil
 }
 
-func authenticate(config Config, resp interface{}) (statusCode int, err error) {
+func authenticate(config Config, resp interface{}) error {
 	endpointUrl, _ := url.Parse(config.InstanceURL)
 	endpointUrl = endpointUrl.JoinPath("oauth_token.do")
 	method := "POST"
@@ -73,15 +73,13 @@ func authenticate(config Config, resp interface{}) (statusCode int, err error) {
 	client := &http.Client{}
 	req, err := http.NewRequest(method, endpointUrl.String(), payload)
 	if err != nil {
-		fmt.Println(err)
-		return 0, err
+		return fmt.Errorf("failed to create a new request: %w", err)
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	httpResp, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
-		return 0, err
+		return fmt.Errorf("failed to send the request: %w", err)
 	}
 	defer httpResp.Body.Close()
 
@@ -91,19 +89,18 @@ func authenticate(config Config, resp interface{}) (statusCode int, err error) {
 		}{}
 		err = json.NewDecoder(httpResp.Body).Decode(&httpError)
 		if err != nil {
-			return httpResp.StatusCode, err
+			return fmt.Errorf("failed to decode json error response payload: %w", err)
 		}
-		return httpResp.StatusCode, &HTTPError{Code: httpResp.StatusCode, Message: httpError.Message}
+		return &HTTPError{Code: httpResp.StatusCode, Message: httpError.Message}
 	}
 
 	if resp != nil {
 		err = json.NewDecoder(httpResp.Body).Decode(resp)
 		if err != nil {
-			fmt.Println(err.Error())
-			return httpResp.StatusCode, err
+			return fmt.Errorf("failed to decode json error response payload: %w", err)
 		}
 	}
-	return httpResp.StatusCode, nil
+	return nil
 }
 
 func (sn *ServiceNow) doAPI(req http.Request, result interface{}) error {
@@ -111,21 +108,18 @@ func (sn *ServiceNow) doAPI(req http.Request, result interface{}) error {
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", sn.servicenowToken))
 	res, err := client.Do(&req)
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return fmt.Errorf("failed to send the request: %w", err)
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return fmt.Errorf("failed to read the response body: %w", err)
 	}
 
 	defer res.Body.Close()
 
 	if err := json.Unmarshal(body, &result); err != nil {
-		fmt.Println("Can not unmarshal JSON", err.Error())
-		return err
+		return fmt.Errorf("failed to unmarshal response payload: %w", err)
 	}
 	return nil
 }

@@ -100,8 +100,7 @@ func (sn *SnKmApiKnowledgeArticles) retrieveArticles(limit, offset int, result i
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return fmt.Errorf("failed to create a new request: %w", err)
 	}
 	return sn.doAPI(*req, result)
 }
@@ -111,8 +110,7 @@ func (sn *SnKmApiKnowledgeArticles) retrieveArticle(sysId string, result interfa
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return fmt.Errorf("failed to create a new request: %w", err)
 	}
 	return sn.doAPI(*req, result)
 }

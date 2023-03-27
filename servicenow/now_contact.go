@@ -111,8 +111,7 @@ func (sn *NowContact) retrieveContacts(limit, offset int, result interface{}) er
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return fmt.Errorf("failed to create a new request: %w", err)
 	}
 	return sn.doAPI(*req, result)
 }
@@ -122,8 +121,7 @@ func (sn *NowContact) retrieveContact(sysId string, result interface{}) error {
 	method := "GET"
 	req, err := http.NewRequest(method, endpointUrl.String(), nil)
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return fmt.Errorf("failed to create a new request: %w", err)
 	}
 	return sn.doAPI(*req, result)
 }
