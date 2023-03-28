@@ -91,7 +91,14 @@ type Contact struct {
 // See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/contact-api.html#title_contact-GET
 func (sn *NowContact) List(limit, offset int) (*ContactListResponse, error) {
 	var result ContactListResponse
-	err := sn.retrieveContacts(limit, offset, &result)
+	endpointUrl := sn.baseURL.JoinPath("api/now/contact")
+
+	queryUrl := endpointUrl.Query()
+	queryUrl.Add("sysparm_limit", strconv.Itoa(limit))
+	queryUrl.Add("sysparm_offset", strconv.Itoa(offset))
+	endpointUrl.RawQuery = queryUrl.Encode()
+
+	err := sn.doAPI("GET", endpointUrl.String(), &result)
 	return &result, err
 }
 
@@ -100,22 +107,7 @@ func (sn *NowContact) List(limit, offset int) (*ContactListResponse, error) {
 // See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/contact-api.html#title_contact-GET-id
 func (sn *NowContact) Read(sysId string) (*ContactGetResponse, error) {
 	var result ContactGetResponse
-	err := sn.retrieveContact(sysId, &result)
-	return &result, err
-}
-
-func (sn *NowContact) retrieveContacts(limit, offset int, result interface{}) error {
-	endpointUrl := sn.baseURL.JoinPath("api/now/contact")
-
-	queryUrl := endpointUrl.Query()
-	queryUrl.Add("sysparm_limit", strconv.Itoa(limit))
-	queryUrl.Add("sysparm_offset", strconv.Itoa(offset))
-	endpointUrl.RawQuery = queryUrl.Encode()
-
-	return sn.doAPI("GET", endpointUrl.String(), result)
-}
-
-func (sn *NowContact) retrieveContact(sysId string, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath("api/now/contact").JoinPath(sysId)
-	return sn.doAPI("GET", endpointUrl.String(), result)
+	err := sn.doAPI("GET", endpointUrl.String(), &result)
+	return &result, err
 }

@@ -80,7 +80,14 @@ type ArticleResult struct {
 // See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/knowledge-api.html
 func (sn *SnKmApiKnowledgeArticles) List(limit, offset int) (*ArticleListResponse, error) {
 	var result ArticleListResponse
-	err := sn.retrieveArticles(limit, offset, &result)
+	endpointUrl := sn.baseURL.JoinPath("api/sn_km_api/knowledge/articles")
+
+	queryUrl := endpointUrl.Query()
+	queryUrl.Add("limit", strconv.Itoa(limit))
+	queryUrl.Add("offset", strconv.Itoa(offset))
+	endpointUrl.RawQuery = queryUrl.Encode()
+
+	err := sn.doAPI("GET", endpointUrl.String(), &result)
 	return &result, err
 }
 
@@ -89,22 +96,7 @@ func (sn *SnKmApiKnowledgeArticles) List(limit, offset int) (*ArticleListRespons
 // See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/knowledge-api.html#title_knowledge-GET-articles-id
 func (sn *SnKmApiKnowledgeArticles) Read(sysId string) (*ArticleGetResponse, error) {
 	var result ArticleGetResponse
-	err := sn.retrieveArticle(sysId, &result)
-	return &result, err
-}
-
-func (sn *SnKmApiKnowledgeArticles) retrieveArticles(limit, offset int, result interface{}) error {
-	endpointUrl := sn.baseURL.JoinPath("api/sn_km_api/knowledge/articles")
-
-	queryUrl := endpointUrl.Query()
-	queryUrl.Add("limit", strconv.Itoa(limit))
-	queryUrl.Add("offset", strconv.Itoa(offset))
-	endpointUrl.RawQuery = queryUrl.Encode()
-
-	return sn.doAPI("GET", endpointUrl.String(), result)
-}
-
-func (sn *SnKmApiKnowledgeArticles) retrieveArticle(sysId string, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath("api/sn_km_api/knowledge/articles").JoinPath(sysId)
-	return sn.doAPI("GET", endpointUrl.String(), result)
+	err := sn.doAPI("GET", endpointUrl.String(), &result)
+	return &result, err
 }
