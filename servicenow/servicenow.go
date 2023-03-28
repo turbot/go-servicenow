@@ -35,6 +35,7 @@ type OAuthTokenResponse struct {
 	ExpiresIn    int    `json:"expires_in"`
 }
 
+// New creates a new ServiceNow client by authenticating using the supplied credentials.
 func New(config Config) (serviceNow *ServiceNow, err error) {
 	baseURL, _ := url.Parse(config.InstanceURL)
 
@@ -56,6 +57,7 @@ func New(config Config) (serviceNow *ServiceNow, err error) {
 	return sn, nil
 }
 
+// Authenticates the client and returns an API token to be used on API calls.
 func authenticate(config Config, resp interface{}) error {
 	endpointUrl, _ := url.Parse(config.InstanceURL)
 	endpointUrl = endpointUrl.JoinPath("oauth_token.do")
@@ -103,6 +105,7 @@ func authenticate(config Config, resp interface{}) error {
 	return nil
 }
 
+// Execute API calls
 func (sn *ServiceNow) doAPI(req http.Request, result interface{}) error {
 	client := &http.Client{}
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", sn.servicenowToken))
