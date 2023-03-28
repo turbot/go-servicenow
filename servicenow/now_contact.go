@@ -1,8 +1,6 @@
 package servicenow
 
 import (
-	"fmt"
-	"net/http"
 	"strconv"
 )
 
@@ -114,20 +112,10 @@ func (sn *NowContact) retrieveContacts(limit, offset int, result interface{}) er
 	queryUrl.Add("sysparm_offset", strconv.Itoa(offset))
 	endpointUrl.RawQuery = queryUrl.Encode()
 
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		return fmt.Errorf("failed to create a new request: %w", err)
-	}
-	return sn.doAPI(*req, result)
+	return sn.doAPI("GET", endpointUrl.String(), result)
 }
 
 func (sn *NowContact) retrieveContact(sysId string, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath("api/now/contact").JoinPath(sysId)
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		return fmt.Errorf("failed to create a new request: %w", err)
-	}
-	return sn.doAPI(*req, result)
+	return sn.doAPI("GET", endpointUrl.String(), result)
 }

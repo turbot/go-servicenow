@@ -106,10 +106,15 @@ func authenticate(config Config, resp interface{}) error {
 }
 
 // Execute API calls
-func (sn *ServiceNow) doAPI(req http.Request, result interface{}) error {
+func (sn *ServiceNow) doAPI(method string, endpointUrl string, result interface{}) error {
+	req, err := http.NewRequest(method, endpointUrl, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create a new request: %w", err)
+	}
+
 	client := &http.Client{}
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", sn.servicenowToken))
-	res, err := client.Do(&req)
+	res, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to send the request: %w", err)
 	}

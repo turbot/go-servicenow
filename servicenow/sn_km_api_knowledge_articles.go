@@ -1,8 +1,6 @@
 package servicenow
 
 import (
-	"fmt"
-	"net/http"
 	"strconv"
 )
 
@@ -103,20 +101,10 @@ func (sn *SnKmApiKnowledgeArticles) retrieveArticles(limit, offset int, result i
 	queryUrl.Add("offset", strconv.Itoa(offset))
 	endpointUrl.RawQuery = queryUrl.Encode()
 
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		return fmt.Errorf("failed to create a new request: %w", err)
-	}
-	return sn.doAPI(*req, result)
+	return sn.doAPI("GET", endpointUrl.String(), result)
 }
 
 func (sn *SnKmApiKnowledgeArticles) retrieveArticle(sysId string, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath("api/sn_km_api/knowledge/articles").JoinPath(sysId)
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		return fmt.Errorf("failed to create a new request: %w", err)
-	}
-	return sn.doAPI(*req, result)
+	return sn.doAPI("GET", endpointUrl.String(), result)
 }

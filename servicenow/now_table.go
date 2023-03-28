@@ -2,7 +2,6 @@ package servicenow
 
 import (
 	"fmt"
-	"net/http"
 	"strconv"
 )
 
@@ -25,12 +24,7 @@ func (sn *NowTable) List(tableName string, limit int, offset int, result interfa
 	queryUrl.Add("sysparm_offset", strconv.Itoa(offset))
 	endpointUrl.RawQuery = queryUrl.Encode()
 
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		return fmt.Errorf("failed to create a new request: %w", err)
-	}
-	return sn.doAPI(*req, result)
+	return sn.doAPI("GET", endpointUrl.String(), result)
 }
 
 // Read consumer details.
@@ -38,10 +32,5 @@ func (sn *NowTable) List(tableName string, limit int, offset int, result interfa
 // See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/c_TableAPI.html#title_table-GET-id
 func (sn *NowTable) Read(tableName string, sysId string, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath(fmt.Sprintf("api/now/table/%s/%s", tableName, sysId))
-	method := "GET"
-	req, err := http.NewRequest(method, endpointUrl.String(), nil)
-	if err != nil {
-		return fmt.Errorf("failed to create a new request: %w", err)
-	}
-	return sn.doAPI(*req, result)
+	return sn.doAPI("GET", endpointUrl.String(), result)
 }
