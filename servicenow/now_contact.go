@@ -88,12 +88,18 @@ type Contact struct {
 	Account                 string `json:"account"`
 }
 
+// List all consumers.
+//
+// See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/contact-api.html#title_contact-GET
 func (sn *NowContact) List(limit, offset int) (*ContactListResponse, error) {
 	var result ContactListResponse
 	err := sn.retrieveContacts(limit, offset, &result)
 	return &result, err
 }
 
+// Read consumer details.
+//
+// See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/contact-api.html#title_contact-GET-id
 func (sn *NowContact) Read(sysId string) (*ContactGetResponse, error) {
 	var result ContactGetResponse
 	err := sn.retrieveContact(sysId, &result)

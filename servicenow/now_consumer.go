@@ -61,12 +61,18 @@ type Consumer struct {
 	Primary           string `json:"primary"`
 }
 
+// List all consumers.
+//
+// See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/consumer-api.html#title_consumer-GET
 func (sn *NowConsumer) List(limit, offset int) (*ConsumerListResponse, error) {
 	var result ConsumerListResponse
 	err := sn.retrieveConsumers(limit, offset, &result)
 	return &result, err
 }
 
+// Read consumer details.
+//
+// See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/consumer-api.html#title_consumer-GET-id
 func (sn *NowConsumer) Read(sysId string) (*ConsumerGetResponse, error) {
 	var result ConsumerGetResponse
 	err := sn.retrieveConsumer(sysId, &result)

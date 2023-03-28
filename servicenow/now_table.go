@@ -14,6 +14,9 @@ func newNowTable(sn *ServiceNow) *NowTable {
 	return &NowTable{sn}
 }
 
+// List all consumers.
+//
+// See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/c_TableAPI.html#title_table-GET
 func (sn *NowTable) List(tableName string, limit int, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath(fmt.Sprintf("api/now/table/%s", tableName))
 
@@ -29,6 +32,9 @@ func (sn *NowTable) List(tableName string, limit int, result interface{}) error 
 	return sn.doAPI(*req, result)
 }
 
+// Read consumer details.
+//
+// See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/c_TableAPI.html#title_table-GET-id
 func (sn *NowTable) Read(tableName string, sysId string, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath(fmt.Sprintf("api/now/table/%s/%s", tableName, sysId))
 	method := "GET"

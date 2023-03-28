@@ -77,12 +77,18 @@ type ArticleResult struct {
 	Articles []Article `json:"articles"`
 }
 
+// List all consumers.
+//
+// See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/knowledge-api.html
 func (sn *SnKmApiKnowledgeArticles) List(limit, offset int) (*ArticleListResponse, error) {
 	var result ArticleListResponse
 	err := sn.retrieveArticles(limit, offset, &result)
 	return &result, err
 }
 
+// Read consumer details.
+//
+// See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/knowledge-api.html#title_knowledge-GET-articles-id
 func (sn *SnKmApiKnowledgeArticles) Read(sysId string) (*ArticleGetResponse, error) {
 	var result ArticleGetResponse
 	err := sn.retrieveArticle(sysId, &result)
