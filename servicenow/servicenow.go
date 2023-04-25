@@ -18,6 +18,7 @@ type ServiceNow struct {
 	SnKmApiKnowledgeArticles *SnKmApiKnowledgeArticles
 	SnChgRestChange          *SnChgRestChange
 	SnChgRestChangeModel     *SnChgRestChangeModel
+	SnChgRestChangeTask      *SnChgRestChangeTask
 }
 
 type Config struct {
@@ -57,6 +58,7 @@ func New(config Config) (serviceNow *ServiceNow, err error) {
 	sn.SnKmApiKnowledgeArticles = newSnKmApiKnowledgeArticles(sn)
 	sn.SnChgRestChange = newSnChgRestChange(sn)
 	sn.SnChgRestChangeModel = newSnChgRestChangeModel(sn)
+	sn.SnChgRestChangeTask = newSnChgRestChangeTask(sn)
 
 	return sn, nil
 }
