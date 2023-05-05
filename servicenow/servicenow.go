@@ -21,6 +21,7 @@ type ServiceNow struct {
 	SnChgRestChangeTask      *SnChgRestChangeTask
 	SnChgRestChangeSchedule  *SnChgRestChangeSchedule
 	SnChgRestChangeConflict  *SnChgRestChangeConflict
+	SnChgRestChangeCi        *SnChgRestChangeCi
 }
 
 type Config struct {
@@ -63,6 +64,7 @@ func New(config Config) (serviceNow *ServiceNow, err error) {
 	sn.SnChgRestChangeTask = newSnChgRestChangeTask(sn)
 	sn.SnChgRestChangeSchedule = newSnChgRestChangeSchedule(sn)
 	sn.SnChgRestChangeConflict = newSnChgRestChangeConflict(sn)
+	sn.SnChgRestChangeCi = newSnChgRestChangeCi(sn)
 
 	return sn, nil
 }
