@@ -19,74 +19,74 @@ type ContactListResponse struct {
 	Result []Contact `json:"result"`
 }
 type Contact struct {
-	Country                 string `json:"country"`
-	CalendarIntegration     string `json:"calendar_integration"`
-	LastPositionUpdate      string `json:"last_position_update"`
-	LastLoginTime           string `json:"last_login_time"`
-	LastLoginDevice         string `json:"last_login_device"`
-	Source                  string `json:"source"`
-	SysUpdatedOn            string `json:"sys_updated_on"`
+	Account                 string `json:"account"`
+	Active                  string `json:"active"`
+	AgentStatus             string `json:"agent_status"`
 	Building                string `json:"building"`
-	WebServiceAccessOnly    string `json:"web_service_access_only"`
-	Notification            string `json:"notification"`
-	SysUpdatedBy            string `json:"sys_updated_by"`
+	CalendarIntegration     string `json:"calendar_integration"`
+	City                    string `json:"city"`
+	Company                 string `json:"company"`
+	CostCenter              string `json:"cost_center"`
+	Country                 string `json:"country"`
+	DateFormat              string `json:"date_format"`
+	DefaultPerspective      string `json:"default_perspective"`
+	Department              string `json:"department"`
+	EduStatus               string `json:"edu_status"`
+	Email                   string `json:"email"`
+	EmployeeNumber          string `json:"employee_number"`
 	EnableMultifactorAuthn  string `json:"enable_multifactor_authn"`
+	FailedAttempts          string `json:"failed_attempts"`
+	FirstName               string `json:"first_name"`
+	Gender                  string `json:"gender"`
+	GeolocationTracked      string `json:"geolocation_tracked"`
+	HomePhone               string `json:"home_phone"`
+	InternalIntegrationUser string `json:"internal_integration_user"`
+	Introduction            string `json:"introduction"`
+	LastLogin               string `json:"last_login"`
+	LastLoginDevice         string `json:"last_login_device"`
+	LastLoginTime           string `json:"last_login_time"`
+	LastName                string `json:"last_name"`
+	LastPositionUpdate      string `json:"last_position_update"`
+	Latitude                string `json:"latitude"`
+	LdapServer              string `json:"ldap_server"`
+	Location                string `json:"location"`
+	LockedOut               string `json:"locked_out"`
+	Longitude               string `json:"longitude"`
+	Manager                 string `json:"manager"`
+	MiddleName              string `json:"middle_name"`
+	MobilePhone             string `json:"mobile_phone"`
+	Name                    string `json:"name"`
+	Notification            string `json:"notification"`
+	OnSchedule              string `json:"on_schedule"`
+	Phone                   string `json:"phone"`
+	Photo                   string `json:"photo"`
+	PreferredLanguage       string `json:"preferred_language"`
+	Roles                   string `json:"roles"`
+	Schedule                string `json:"schedule"`
+	Source                  string `json:"source"`
+	State                   string `json:"state"`
+	Street                  string `json:"street"`
+	SysClassName            string `json:"sys_class_name"`
+	SysCreatedBy            string `json:"sys_created_by"`
 	SysCreatedOn            string `json:"sys_created_on"`
 	SysDomain               string `json:"sys_domain"`
-	AgentStatus             string `json:"agent_status"`
-	State                   string `json:"state"`
-	Vip                     string `json:"vip"`
-	SysCreatedBy            string `json:"sys_created_by"`
-	Longitude               string `json:"longitude"`
-	Zip                     string `json:"zip"`
-	HomePhone               string `json:"home_phone"`
-	TimeFormat              string `json:"time_format"`
-	LastLogin               string `json:"last_login"`
-	DefaultPerspective      string `json:"default_perspective"`
-	GeolocationTracked      string `json:"geolocation_tracked"`
-	Active                  string `json:"active"`
-	TimeSheetPolicy         string `json:"time_sheet_policy"`
 	SysDomainPath           string `json:"sys_domain_path"`
-	Phone                   string `json:"phone"`
-	CostCenter              string `json:"cost_center"`
-	Name                    string `json:"name"`
-	EmployeeNumber          string `json:"employee_number"`
-	Gender                  string `json:"gender"`
-	City                    string `json:"city"`
-	UserName                string `json:"user_name"`
-	FailedAttempts          string `json:"failed_attempts"`
-	EduStatus               string `json:"edu_status"`
-	Latitude                string `json:"latitude"`
-	Roles                   string `json:"roles"`
-	Title                   string `json:"title"`
-	SysClassName            string `json:"sys_class_name"`
 	SysID                   string `json:"sys_id"`
-	InternalIntegrationUser string `json:"internal_integration_user"`
-	LdapServer              string `json:"ldap_server"`
-	MobilePhone             string `json:"mobile_phone"`
-	Street                  string `json:"street"`
-	Company                 string `json:"company"`
-	Department              string `json:"department"`
-	FirstName               string `json:"first_name"`
-	PreferredLanguage       string `json:"preferred_language"`
-	Introduction            string `json:"introduction"`
-	Email                   string `json:"email"`
-	Manager                 string `json:"manager"`
-	LockedOut               string `json:"locked_out"`
 	SysModCount             string `json:"sys_mod_count"`
-	LastName                string `json:"last_name"`
-	Photo                   string `json:"photo"`
 	SysTags                 string `json:"sys_tags"`
-	MiddleName              string `json:"middle_name"`
+	SysUpdatedBy            string `json:"sys_updated_by"`
+	SysUpdatedOn            string `json:"sys_updated_on"`
+	TimeFormat              string `json:"time_format"`
+	TimeSheetPolicy         string `json:"time_sheet_policy"`
 	TimeZone                string `json:"time_zone"`
-	Schedule                string `json:"schedule"`
-	OnSchedule              string `json:"on_schedule"`
-	DateFormat              string `json:"date_format"`
-	Location                string `json:"location"`
-	Account                 string `json:"account"`
+	Title                   string `json:"title"`
+	UserName                string `json:"user_name"`
+	Vip                     string `json:"vip"`
+	WebServiceAccessOnly    string `json:"web_service_access_only"`
+	Zip                     string `json:"zip"`
 }
 
-// List all consumers.
+// List all contacts.
 //
 // See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/contact-api.html#title_contact-GET
 func (sn *NowContact) List(limit, offset int) (*ContactListResponse, error) {
@@ -102,7 +102,7 @@ func (sn *NowContact) List(limit, offset int) (*ContactListResponse, error) {
 	return &result, err
 }
 
-// Read consumer details.
+// Read contact details.
 //
 // See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/contact-api.html#title_contact-GET-id
 func (sn *NowContact) Read(sysId string) (*ContactGetResponse, error) {

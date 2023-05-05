@@ -19,44 +19,44 @@ type ConsumerListResponse struct {
 	Result []Consumer `json:"result"`
 }
 type Consumer struct {
-	Country           string `json:"country"`
-	Notes             string `json:"notes"`
-	Gender            string `json:"gender"`
-	City              string `json:"city"`
-	Prefix            string `json:"prefix"`
-	SysUpdatedOn      string `json:"sys_updated_on"`
-	Suffix            string `json:"suffix"`
-	Title             string `json:"title"`
-	Number            string `json:"number"`
-	Notification      string `json:"notification"`
-	SysID             string `json:"sys_id"`
+	Active            string `json:"active"`
 	BusinessPhone     string `json:"business_phone"`
-	SysUpdatedBy      string `json:"sys_updated_by"`
-	MobilePhone       string `json:"mobile_phone"`
-	Street            string `json:"street"`
-	SysCreatedOn      string `json:"sys_created_on"`
-	SysDomain         string `json:"sys_domain"`
-	State             string `json:"state"`
+	City              string `json:"city"`
+	Country           string `json:"country"`
+	DateFormat        string `json:"date_format"`
+	Email             string `json:"email"`
 	Fax               string `json:"fax"`
 	FirstName         string `json:"first_name"`
-	Email             string `json:"email"`
-	PreferredLanguage string `json:"preferred_language"`
-	SysCreatedBy      string `json:"sys_created_by"`
-	Zip               string `json:"zip"`
+	Gender            string `json:"gender"`
 	HomePhone         string `json:"home_phone"`
-	TimeFormat        string `json:"time_format"`
-	SysModCount       string `json:"sys_mod_count"`
-	LastName          string `json:"last_name"`
-	Photo             string `json:"photo"`
-	Active            string `json:"active"`
-	MiddleName        string `json:"middle_name"`
-	TimeZone          string `json:"time_zone"`
-	SysTags           string `json:"sys_tags"`
-	Name              string `json:"name"`
 	Household         string `json:"household"`
-	DateFormat        string `json:"date_format"`
-	User              string `json:"user"`
+	LastName          string `json:"last_name"`
+	MiddleName        string `json:"middle_name"`
+	MobilePhone       string `json:"mobile_phone"`
+	Name              string `json:"name"`
+	Notes             string `json:"notes"`
+	Notification      string `json:"notification"`
+	Number            string `json:"number"`
+	Photo             string `json:"photo"`
+	PreferredLanguage string `json:"preferred_language"`
+	Prefix            string `json:"prefix"`
 	Primary           string `json:"primary"`
+	State             string `json:"state"`
+	Street            string `json:"street"`
+	Suffix            string `json:"suffix"`
+	SysCreatedBy      string `json:"sys_created_by"`
+	SysCreatedOn      string `json:"sys_created_on"`
+	SysDomain         string `json:"sys_domain"`
+	SysID             string `json:"sys_id"`
+	SysModCount       string `json:"sys_mod_count"`
+	SysTags           string `json:"sys_tags"`
+	SysUpdatedBy      string `json:"sys_updated_by"`
+	SysUpdatedOn      string `json:"sys_updated_on"`
+	TimeFormat        string `json:"time_format"`
+	TimeZone          string `json:"time_zone"`
+	Title             string `json:"title"`
+	User              string `json:"user"`
+	Zip               string `json:"zip"`
 }
 
 // List all consumers.
