@@ -1,6 +1,7 @@
 package servicenow
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -11,7 +12,8 @@ import (
 
 type ServiceNow struct {
 	baseURL                  *url.URL
-	servicenowToken          string
+	bearerToken              string
+	basicAuth                string
 	NowContact               *NowContact
 	NowConsumer              *NowConsumer
 	NowTable                 *NowTable
@@ -26,6 +28,7 @@ type ServiceNow struct {
 
 type Config struct {
 	InstanceURL  string
+	BasicAuth    bool
 	GrantType    string
 	ClientID     string
 	ClientSecret string
@@ -45,16 +48,21 @@ type OAuthTokenResponse struct {
 func New(config Config) (serviceNow *ServiceNow, err error) {
 	baseURL, _ := url.Parse(config.InstanceURL)
 
-	resp := &OAuthTokenResponse{}
-	err = authenticate(config, resp)
-	if err != nil {
-		return nil, err
+	sn := &ServiceNow{
+		baseURL: baseURL,
 	}
 
-	sn := &ServiceNow{
-		baseURL:         baseURL,
-		servicenowToken: resp.AccessToken,
+	if config.BasicAuth {
+		sn.basicAuth = base64.StdEncoding.EncodeToString([]byte(config.Username + ":" + config.Password))
+	} else {
+		resp := &OAuthTokenResponse{}
+		err = authenticate(config, resp)
+		if err != nil {
+			return nil, err
+		}
+		sn.bearerToken = resp.AccessToken
 	}
+
 	sn.NowContact = newNowContact(sn)
 	sn.NowConsumer = newNowConsumer(sn)
 	sn.NowTable = newNowTable(sn)
@@ -125,7 +133,12 @@ func (sn *ServiceNow) doAPI(method string, endpointUrl string, result interface{
 	}
 
 	client := &http.Client{}
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", sn.servicenowToken))
+	if sn.basicAuth != "" {
+		req.Header.Add("Authorization", fmt.Sprintf("Basic %s", sn.basicAuth))
+	}
+	if sn.bearerToken != "" {
+		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", sn.bearerToken))
+	}
 	res, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to send the request: %w", err)
