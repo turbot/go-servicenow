@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 )
 
@@ -116,12 +117,20 @@ func authenticate(config *Config, resp interface{}) error {
 		return &HTTPError{Code: httpResp.StatusCode, Message: httpError.Message}
 	}
 
-	if resp != nil {
-		err = json.NewDecoder(httpResp.Body).Decode(resp)
-		if err != nil {
-			return fmt.Errorf("failed to decode json error response payload: %w", err)
-		}
+	body, err := ioutil.ReadAll(httpResp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read response payload: %w", err)
 	}
+
+	if isInstanceHibernating(body) {
+		return fmt.Errorf("ServiceNow instance is hibernating")
+	}
+
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		return fmt.Errorf("failed to decode json error response payload: %w", err)
+	}
+
 	return nil
 }
 
@@ -151,6 +160,10 @@ func (sn *ServiceNow) doAPI(method string, endpointUrl string, result interface{
 
 	defer res.Body.Close()
 
+	if isInstanceHibernating(body) {
+		return fmt.Errorf("ServiceNow instance is hibernating")
+	}
+
 	if err := json.Unmarshal(body, &result); err != nil {
 		return fmt.Errorf("failed to unmarshal response payload: %w", err)
 	}
@@ -170,4 +183,9 @@ func (e *HTTPError) Error() string {
 		return e.Message
 	}
 	return fmt.Sprintf("response %d (%s)", e.Code, http.StatusText(e.Code))
+}
+
+func isInstanceHibernating(body []byte) bool {
+	re := regexp.MustCompile("Your instance is hibernating")
+	return re.Match(body)
 }
