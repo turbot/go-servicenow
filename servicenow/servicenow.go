@@ -56,7 +56,7 @@ func New(config Config) (serviceNow *ServiceNow, err error) {
 		sn.basicAuth = base64.StdEncoding.EncodeToString([]byte(config.Username + ":" + config.Password))
 	} else {
 		resp := &OAuthTokenResponse{}
-		err = authenticate(config, resp)
+		err = authenticate(&config, resp)
 		if err != nil {
 			return nil, err
 		}
@@ -78,7 +78,7 @@ func New(config Config) (serviceNow *ServiceNow, err error) {
 }
 
 // Authenticates the client and returns an API token to be used on API calls.
-func authenticate(config Config, resp interface{}) error {
+func authenticate(config *Config, resp interface{}) error {
 	endpointUrl, _ := url.Parse(config.InstanceURL)
 	endpointUrl = endpointUrl.JoinPath("oauth_token.do")
 	method := "POST"
