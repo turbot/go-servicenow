@@ -13,19 +13,16 @@ import (
 )
 
 type ServiceNow struct {
-	baseURL                  *url.URL
-	bearerToken              string
-	basicAuth                string
-	NowContact               *NowContact
-	NowConsumer              *NowConsumer
-	NowTable                 *NowTable
-	SnKmApiKnowledgeArticles *SnKmApiKnowledgeArticles
-	SnChgRestChange          *SnChgRestChange
-	SnChgRestChangeModel     *SnChgRestChangeModel
-	SnChgRestChangeTask      *SnChgRestChangeTask
-	SnChgRestChangeSchedule  *SnChgRestChangeSchedule
-	SnChgRestChangeConflict  *SnChgRestChangeConflict
-	SnChgRestChangeCi        *SnChgRestChangeCi
+	baseURL              *url.URL
+	bearerToken          string
+	basicAuth            string
+	NowContact           *NowContact
+	NowConsumer          *NowConsumer
+	NowTable             *NowTable
+	SnChgRestChange      *SnChgRestChange
+	SnChgRestChangeModel *SnChgRestChangeModel
+	SnChgRestChangeTask  *SnChgRestChangeTask
+	SnChgRestChangeCi    *SnChgRestChangeCi
 }
 
 type Config struct {
@@ -68,12 +65,9 @@ func New(config Config) (serviceNow *ServiceNow, err error) {
 	sn.NowContact = newNowContact(sn)
 	sn.NowConsumer = newNowConsumer(sn)
 	sn.NowTable = newNowTable(sn)
-	sn.SnKmApiKnowledgeArticles = newSnKmApiKnowledgeArticles(sn)
 	sn.SnChgRestChange = newSnChgRestChange(sn)
 	sn.SnChgRestChangeModel = newSnChgRestChangeModel(sn)
 	sn.SnChgRestChangeTask = newSnChgRestChangeTask(sn)
-	sn.SnChgRestChangeSchedule = newSnChgRestChangeSchedule(sn)
-	sn.SnChgRestChangeConflict = newSnChgRestChangeConflict(sn)
 	sn.SnChgRestChangeCi = newSnChgRestChangeCi(sn)
 
 	return sn, nil
