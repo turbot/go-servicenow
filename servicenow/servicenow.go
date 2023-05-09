@@ -135,8 +135,17 @@ func DoRequest(method string, endpointUrl string, header http.Header, payload io
 			} `json:"error"`
 		}{}
 		err := json.Unmarshal(body, &httpError)
+
 		if err != nil {
-			return fmt.Errorf("failed to decode json error response payload: %w", err)
+			httpError := struct {
+				Error            string `json:"error"`
+				ErrorDescription string `json:"error_description"`
+			}{}
+			err := json.Unmarshal(body, &httpError)
+			if err != nil {
+				return &HTTPError{Code: res.StatusCode, Message: string(body)}
+			}
+			return &HTTPError{Code: res.StatusCode, Message: httpError.ErrorDescription}
 		}
 		return &HTTPError{Code: res.StatusCode, Message: httpError.Error.Message, Detail: httpError.Error.Detail}
 	}
