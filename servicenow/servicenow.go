@@ -104,6 +104,12 @@ func authenticate(config *Config, resp interface{}) error {
 	if err != nil {
 		return fmt.Errorf("failed to send the request: %w", err)
 	}
+
+	body, err := ioutil.ReadAll(httpResp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read response payload: %w", err)
+	}
+
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode >= 300 {
@@ -115,11 +121,6 @@ func authenticate(config *Config, resp interface{}) error {
 			return fmt.Errorf("failed to decode json error response payload: %w", err)
 		}
 		return &HTTPError{Code: httpResp.StatusCode, Message: httpError.Message}
-	}
-
-	body, err := ioutil.ReadAll(httpResp.Body)
-	if err != nil {
-		return fmt.Errorf("failed to read response payload: %w", err)
 	}
 
 	if isInstanceHibernating(body) {
@@ -160,6 +161,20 @@ func (sn *ServiceNow) doAPI(method string, endpointUrl string, result interface{
 
 	defer res.Body.Close()
 
+	if res.StatusCode >= 300 {
+		httpError := struct {
+			Error struct {
+				Message string `json:"message"`
+				Detail  string `json:"detail"`
+			} `json:"error"`
+		}{}
+		err := json.Unmarshal(body, &httpError)
+		if err != nil {
+			return fmt.Errorf("failed to decode json error response payload: %w", err)
+		}
+		return &HTTPError{Code: res.StatusCode, Message: httpError.Error.Message, Detail: httpError.Error.Detail}
+	}
+
 	if isInstanceHibernating(body) {
 		return fmt.Errorf("ServiceNow instance is hibernating")
 	}
@@ -173,6 +188,7 @@ func (sn *ServiceNow) doAPI(method string, endpointUrl string, result interface{
 type HTTPError struct {
 	Code    int
 	Message string
+	Detail  string
 }
 
 func (e *HTTPError) Error() string {
@@ -180,9 +196,9 @@ func (e *HTTPError) Error() string {
 		e.Code = http.StatusInternalServerError
 	}
 	if e.Message != "" {
-		return e.Message
+		return fmt.Sprintf("Got %d (%s) %s", e.Code, e.Message, e.Detail)
 	}
-	return fmt.Sprintf("response %d (%s)", e.Code, http.StatusText(e.Code))
+	return fmt.Sprintf("Got %d (%s)", e.Code, http.StatusText(e.Code))
 }
 
 func isInstanceHibernating(body []byte) bool {
