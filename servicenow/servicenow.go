@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -82,7 +83,6 @@ func New(config Config) (serviceNow *ServiceNow, err error) {
 func authenticate(config *Config, resp interface{}) error {
 	endpointUrl, _ := url.Parse(config.InstanceURL)
 	endpointUrl = endpointUrl.JoinPath("oauth_token.do")
-	method := "POST"
 
 	payloadParameters := url.Values{
 		"grant_type":    {config.GrantType},
@@ -93,62 +93,34 @@ func authenticate(config *Config, resp interface{}) error {
 	}
 	payload := strings.NewReader(payloadParameters.Encode())
 
-	client := &http.Client{}
-	req, err := http.NewRequest(method, endpointUrl.String(), payload)
-	if err != nil {
-		return fmt.Errorf("failed to create a new request: %w", err)
-	}
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-	httpResp, err := client.Do(req)
-	if err != nil {
-		return fmt.Errorf("failed to send the request: %w", err)
+	header := http.Header{
+		"Content-Type": {"application/x-www-form-urlencoded"},
 	}
 
-	body, err := ioutil.ReadAll(httpResp.Body)
-	if err != nil {
-		return fmt.Errorf("failed to read response payload: %w", err)
-	}
-
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode >= 300 {
-		httpError := struct {
-			Message string `json:"message"`
-		}{}
-		err = json.NewDecoder(httpResp.Body).Decode(&httpError)
-		if err != nil {
-			return fmt.Errorf("failed to decode json error response payload: %w", err)
-		}
-		return &HTTPError{Code: httpResp.StatusCode, Message: httpError.Message}
-	}
-
-	if isInstanceHibernating(body) {
-		return fmt.Errorf("ServiceNow instance is hibernating")
-	}
-
-	err = json.Unmarshal(body, &resp)
-	if err != nil {
-		return fmt.Errorf("failed to decode json error response payload: %w", err)
-	}
-
-	return nil
+	return DoRequest("POST", endpointUrl.String(), header, payload, &resp)
 }
 
 // Execute API calls
 func (sn *ServiceNow) doAPI(method string, endpointUrl string, result interface{}) error {
-	req, err := http.NewRequest(method, endpointUrl, nil)
+	header := make(map[string][]string)
+	if sn.basicAuth != "" {
+		header["Authorization"] = []string{fmt.Sprintf("Basic %s", sn.basicAuth)}
+	}
+	if sn.bearerToken != "" {
+		header["Authorization"] = []string{fmt.Sprintf("Bearer %s", sn.bearerToken)}
+	}
+	return DoRequest(method, endpointUrl, header, nil, &result)
+}
+
+func DoRequest(method string, endpointUrl string, header http.Header, payload io.Reader, result interface{}) error {
+	client := &http.Client{}
+
+	req, err := http.NewRequest(method, endpointUrl, payload)
 	if err != nil {
 		return fmt.Errorf("failed to create a new request: %w", err)
 	}
 
-	client := &http.Client{}
-	if sn.basicAuth != "" {
-		req.Header.Add("Authorization", fmt.Sprintf("Basic %s", sn.basicAuth))
-	}
-	if sn.bearerToken != "" {
-		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", sn.bearerToken))
-	}
+	req.Header = header
 	res, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to send the request: %w", err)
