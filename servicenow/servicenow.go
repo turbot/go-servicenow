@@ -51,6 +51,20 @@ func New(config Config) (serviceNow *ServiceNow, err error) {
 		baseURL: baseURL,
 	}
 
+	// As username and password are used on both Basic Auth and OAuth2 (password mode), they are always required
+	if config.Username == "" {
+		return nil, fmt.Errorf("username is missing")
+	}
+	if config.Password == "" {
+		return nil, fmt.Errorf("password is missing")
+	}
+
+	// If authentication mode is not Basic Auth, then client ID and client secret are required
+	if !config.BasicAuth && (config.ClientID == "" || config.ClientSecret == "") {
+		return nil, fmt.Errorf("both client ID and client secret should be provided")
+	}
+
+	// Authenticating
 	if config.BasicAuth {
 		sn.basicAuth = base64.StdEncoding.EncodeToString([]byte(config.Username + ":" + config.Password))
 	} else {
@@ -62,6 +76,7 @@ func New(config Config) (serviceNow *ServiceNow, err error) {
 		sn.bearerToken = resp.AccessToken
 	}
 
+	// Attaching API handlers
 	sn.NowContact = newNowContact(sn)
 	sn.NowConsumer = newNowConsumer(sn)
 	sn.NowTable = newNowTable(sn)
