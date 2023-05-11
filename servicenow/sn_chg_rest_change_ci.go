@@ -28,5 +28,5 @@ func (sn *SnChgRestChangeCi) List(changeSysId string, associationType string, li
 	}
 	endpointUrl.RawQuery = queryUrl.Encode()
 
-	return sn.doAPI("GET", endpointUrl.String(), result)
+	return sn.doAPI("GET", endpointUrl.String(), &result)
 }

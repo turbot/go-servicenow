@@ -27,7 +27,7 @@ func (sn *SnChgRestChange) List(limit int, offset int, query string, result inte
 	}
 	endpointUrl.RawQuery = queryUrl.Encode()
 
-	return sn.doAPI("GET", endpointUrl.String(), result)
+	return sn.doAPI("GET", endpointUrl.String(), &result)
 }
 
 // Read change details.
@@ -35,5 +35,5 @@ func (sn *SnChgRestChange) List(limit int, offset int, query string, result inte
 // See: https://docs.servicenow.com/bundle/rome-application-development/page/integrate/inbound-rest/concept/change-management-api.html#title_change-GET-change-sys_id
 func (sn *SnChgRestChange) Read(sysId string, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath(fmt.Sprintf("api/sn_chg_rest/change/%s", sysId))
-	return sn.doAPI("GET", endpointUrl.String(), result)
+	return sn.doAPI("GET", endpointUrl.String(), &result)
 }

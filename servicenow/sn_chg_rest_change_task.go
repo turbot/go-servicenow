@@ -27,5 +27,5 @@ func (sn *SnChgRestChangeTask) List(changeSysId string, limit int, offset int, q
 	}
 	endpointUrl.RawQuery = queryUrl.Encode()
 
-	return sn.doAPI("GET", endpointUrl.String(), result)
+	return sn.doAPI("GET", endpointUrl.String(), &result)
 }
