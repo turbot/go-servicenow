@@ -1,5 +1,8 @@
 # go-servicenow
-Go SDK for ServiceNow
+
+Go SDK for ServiceNow.
+
+This SDK has been created primarily for use with the [Steampipe ServiceNow plugin](https://github.com/turbot/steampipe-plugin-servicenow), which only uses GET methods from the ServiceNow API. There are no current plans to add support for DELETE/PATCH/POST methods.
 
 ## Getting started
 
@@ -72,8 +75,8 @@ func main() {
 
 ### Contributing
 
-TODO
+Please open pull requests for fixes or additions to this SDK. Please also see our [code of conduct](https://github.com/turbot/steampipe/blob/main/CODE_OF_CONDUCT.md). All contributions are subject to the [Apache 2.0 open source license](https://github.com/turbot/steampipe-plugin-aws/blob/main/LICENSE).
+
 ### Raise an issue
 
 To provide feedback or report a bug, [please raise an issue on our issue tracker](https://github.com/turbot/go-servicenow/issues).
-
