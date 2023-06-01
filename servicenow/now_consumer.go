@@ -75,10 +75,10 @@ func (sn *NowConsumer) List(limit, offset int) (*ConsumerListResponse, error) {
 	return &result, err
 }
 
-// Read consumer details.
+// Get consumer details.
 //
 // See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/consumer-api.html#title_consumer-GET-id
-func (sn *NowConsumer) Read(sysId string) (*ConsumerGetResponse, error) {
+func (sn *NowConsumer) Get(sysId string) (*ConsumerGetResponse, error) {
 	var result ConsumerGetResponse
 	endpointUrl := sn.baseURL.JoinPath("api/now/consumer").JoinPath(sysId)
 	err := sn.doAPI("GET", endpointUrl.String(), &result)

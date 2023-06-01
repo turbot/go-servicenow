@@ -102,10 +102,10 @@ func (sn *NowContact) List(limit, offset int) (*ContactListResponse, error) {
 	return &result, err
 }
 
-// Read contact details.
+// Get contact details.
 //
 // See: https://docs.servicenow.com/bundle/tokyo-application-development/page/integrate/inbound-rest/concept/contact-api.html#title_contact-GET-id
-func (sn *NowContact) Read(sysId string) (*ContactGetResponse, error) {
+func (sn *NowContact) Get(sysId string) (*ContactGetResponse, error) {
 	var result ContactGetResponse
 	endpointUrl := sn.baseURL.JoinPath("api/now/contact").JoinPath(sysId)
 	err := sn.doAPI("GET", endpointUrl.String(), &result)

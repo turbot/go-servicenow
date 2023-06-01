@@ -30,10 +30,10 @@ func (sn *SnChgRestChangeModel) List(limit int, offset int, query string, result
 	return sn.doAPI("GET", endpointUrl.String(), &result)
 }
 
-// Read change model details.
+// Get change model details.
 //
 // See: https://docs.servicenow.com/bundle/rome-application-development/page/integrate/inbound-rest/concept/change-management-api.html#title_change-GET-model-sys_id
-func (sn *SnChgRestChangeModel) Read(sysId string, result interface{}) error {
+func (sn *SnChgRestChangeModel) Get(sysId string, result interface{}) error {
 	endpointUrl := sn.baseURL.JoinPath(fmt.Sprintf("api/sn_chg_rest/change/model/%s", sysId))
 	return sn.doAPI("GET", endpointUrl.String(), &result)
 }
